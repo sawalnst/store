@@ -1,12 +1,41 @@
 import sqlite3
-from bot.config import DB_PATH
+from pathlib import Path
 
-def connect():
+BASE_DIR = Path(__file__).resolve().parent
+DB_PATH = BASE_DIR / "data.db"
+
+
+def get_db():
+    BASE_DIR.mkdir(parents=True, exist_ok=True)
     return sqlite3.connect(DB_PATH)
 
+
 def init_db():
-    conn = connect()
-    c = conn.cursor()
-    c.execute("CREATE TABLE IF NOT EXISTS orders (id TEXT, user_id INT, amount REAL, memo TEXT, status TEXT)")
-    conn.commit()
-    conn.close()
+    db = get_db()
+    cur = db.cursor()
+
+    # USERS
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        tg_id INTEGER UNIQUE,
+        username TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # ORDERS
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS orders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        tg_id INTEGER,
+        product TEXT,
+        amount REAL,
+        status TEXT,
+        tx_hash TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    db.commit()
+    db.close()
