@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv("/root/store/.env")
 
 BOT_TOKEN = os.getenv("8582890088:AAE6jA8_Hu_HvsAYMyoaQYA2DOY2c-XOsjM")
 BOT_NAME = os.getenv("BOT_NAME", "WAllxSTORE")
